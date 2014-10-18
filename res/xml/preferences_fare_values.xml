@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <EditTextPreference
+        android:defaultValue="@string/default_regular"
+        android:inputType="numberDecimal"
+        android:key="regular"
+        android:title="@string/regular" />
+    <EditTextPreference
+        android:defaultValue="@string/default_reduced"
+        android:inputType="numberDecimal"
+        android:key="reduced"
+        android:title="@string/reduced" />
+    <EditTextPreference
+        android:defaultValue="@string/default_express_bus"
+        android:inputType="numberDecimal"
+        android:key="expressBus"
+        android:title="@string/express_bus" />
+    <EditTextPreference
+        android:defaultValue="@string/default_express_bus_reduced"
+        android:inputType="numberDecimal"
+        android:key="expressBusReduced"
+        android:title="@string/express_bus_reduced" />
+
+</PreferenceScreen>
