@@ -7,18 +7,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
 
-/**
- * A collection of useful methods for Android.
- */
+/** A collection of useful methods for Android. */
 public final class AndroidUtilities {
     private AndroidUtilities() {}
     
-    /**
-     * Returns the value of the versionCode attribute.
-     * 
-     * @param  context the context
-     * @return the value of the versionCode attribute
-     */
+    /** Returns the value of the versionCode attribute. */
     public static int getVersionCode(Context context) {
         int versionCode = 0;
         PackageManager pm = context.getPackageManager();
@@ -31,12 +24,7 @@ public final class AndroidUtilities {
         return versionCode;
     }
     
-    /**
-     * Checks if an internet connection is available.
-     *
-     * @param  context the context
-     * @return {@code true} if an internet connection is available
-     */
+    /** Returns true if an internet connection is available. */
     public static boolean isInternetAvailable(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager)context
@@ -45,21 +33,13 @@ public final class AndroidUtilities {
         return networkInfo != null && networkInfo.isConnected();
     }
     
-    /**
-     * Checks if external storage is readable and writable.
-     * 
-     * @return {@code true} if external storage is readable and writable
-     */
+    /** Returns true if external storage is readable and writable. */
     public static boolean isExtStorageWritable() {
         String state = Environment.getExternalStorageState();
         return Environment.MEDIA_MOUNTED.equals(state);
     }
 
-    /**
-     * Checks if external storage is readable.
-     * 
-     * @return {@code true} if external storage is readable
-     */
+    /** Returns true if external storage is readable. */
     public static boolean isExtStorageReadable() {
         String state = Environment.getExternalStorageState();
         return Environment.MEDIA_MOUNTED.equals(state) ||

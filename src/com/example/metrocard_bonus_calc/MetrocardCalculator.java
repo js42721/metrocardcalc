@@ -4,9 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-/**
- * Performs MetroCard bonus calculations.
- */
+/** Performs MetroCard bonus calculations. */
 public class MetrocardCalculator {
     private static final BigDecimal CENT = BigDecimal.valueOf(0.01);
     private static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
@@ -16,18 +14,24 @@ public class MetrocardCalculator {
     private BigDecimal increment;
     
     /**
-     * Constructor.
+     * Constructs a MetroCard bonus calculator.
+     * 
+     * @param bonusMin the minimum payment amount in USD required for a bonus
+     * @param bonusPercentage the bonus percentage
+     * @param increment the payment increment in USD
      */
-    public MetrocardCalculator() {
-        bonusMin = BigDecimal.ZERO;
-        bonusPercentage = BigDecimal.ZERO;
-        increment = CENT;
+    public MetrocardCalculator(BigDecimal bonusMin, BigDecimal bonusPercentage,
+            BigDecimal increment) {
+        
+        setBonusMin(bonusMin);
+        setBonusPercentage(bonusPercentage);
+        setIncrement(increment);
     }
     
     /**
      * Sets the minimum payment needed for a bonus to be applied.
      * 
-     * @param  bonusMin minimum payment in USD
+     * @param  bonusMin the payment amount in USD
      * @throws IllegalArgumentException if bonusMin is negative
      * @throws NullPointerException if bonusMin is null
      */
@@ -41,7 +45,7 @@ public class MetrocardCalculator {
     /**
      * Sets the payment increment.
      * 
-     * @param  increment increment in USD
+     * @param  increment the payment increment in USD
      * @throws IllegalArgumentException if increment is 0 or indivisible by 0.01
      * @throws NullPointerException if increment is null
      */
@@ -58,7 +62,7 @@ public class MetrocardCalculator {
     /**
      * Sets the bonus percentage.
      * 
-     * @param  bonusPercentage a percentage (not a decimal)
+     * @param  bonusPercentage the bonus percentage
      * @throws IllegalArgumentException if bonusPercentage is negative
      * @throws NullPointerException if bonusPercentage is null
      */
@@ -87,11 +91,7 @@ public class MetrocardCalculator {
         return increment;
     }
 
-    /**
-     * Returns the bonus percentage.
-     * 
-     * @return the bonus as a percentage
-     */
+    /** Returns the bonus percentage. */
     public BigDecimal getBonusPercentage() {
         return bonusPercentage;
     }
@@ -103,7 +103,7 @@ public class MetrocardCalculator {
      * @param  fare the cost of a fare in USD
      * @param  currentBalance the current balance in USD
      * @param  rides the desired number of rides
-     * @return payment amount in USD
+     * @return payment the payment amount in USD
      * @throws IllegalArgumentException if an argument is negative
      * @throws NullPointerException if an argument is null
      */
@@ -142,8 +142,8 @@ public class MetrocardCalculator {
     /**
      * Computes the bonus earned on a given payment.
      * 
-     * @param  payment payment amount in USD
-     * @return bonus amount in USD
+     * @param  payment the payment amount in USD
+     * @return bonus the bonus amount in USD
      * @throws IllegalArgumentException if payment is negative
      * @throws NullPointerException if payment is null
      */

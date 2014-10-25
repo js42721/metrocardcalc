@@ -146,7 +146,7 @@ public class SettingsActivity extends SherlockPreferenceActivity {
         }
     }
     
-    /* Sets the summary of a preference to its formatted value. */
+    /** Sets the summary of a preference to its formatted value. */
     private void syncSummary(EditTextPreference etp) {
         String text = etp.getText();
         if ("bonusPercentage".equals(etp.getKey())) {

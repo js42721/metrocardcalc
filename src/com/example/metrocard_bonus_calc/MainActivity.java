@@ -139,7 +139,7 @@ public class MainActivity extends SherlockActivity {
         }
     }
     
-    /* Called when the "calculate" button is pressed. */
+    /** Called when the "calculate" button is pressed. */
     public void compute(View view) {
         BigDecimal balance = BigDecimal.ZERO;
         BigInteger rides = null;
@@ -156,10 +156,8 @@ public class MainActivity extends SherlockActivity {
             return;
         }
 
-        MetrocardCalculator calc = new MetrocardCalculator();
-        calc.setBonusPercentage(bonusPercentage);
-        calc.setBonusMin(bonusMin);
-        calc.setIncrement(increment);
+        MetrocardCalculator calc =
+                new MetrocardCalculator(bonusPercentage, bonusMin, increment);
         
         BigDecimal payment = calc.computePayment(getSelectedFare(), balance, rides);
         BigDecimal bonus = calc.computeBonus(payment);
@@ -173,7 +171,7 @@ public class MainActivity extends SherlockActivity {
         resultDialog(formatResult(payment, newBalance, bonus));
     }
 
-    /* 
+    /**
      * Retrieves fares and other data required for calculations.
      * Default values are from data.xml.
      */
@@ -196,25 +194,25 @@ public class MainActivity extends SherlockActivity {
                 getString(R.string.default_new_card_fee)));
     }
 
-    /* Persists the position of the fare drop-down menu. */
+    /** Persists the position of the fare drop-down menu. */
     private void saveSpinnerPosition() {
         int spinnerPosition = fareSpinner.getSelectedItemPosition();
         prefsEditor.putInt("spinnerPosition", spinnerPosition);
         prefsEditor.commit();
     }
 
-    /* Restores the position of the fare drop-down menu. */
+    /** Restores the position of the fare drop-down menu. */
     private void restoreSpinnerPosition() {
         int spinnerPosition = prefs.getInt("spinnerPosition", 0);
         fareSpinner.setSelection(spinnerPosition, true);
     }
 
-    /* resId is the ID of the fare descriptor. */
+    /** resId is the ID of the fare descriptor. */
     private String makeSpinnerEntry(int resId, String cost) {
         return getString(R.string.spinner_entry, getString(resId), cost);
     }
     
-    /* Fills the fare drop-down menu. Must be called after getData. */
+    /** Fills the fare drop-down menu. Must be called after getData. */
     private void populateSpinner() {
         String[] opts = new String[4];
         opts[REGULAR] = makeSpinnerEntry(R.string.regular, regular.toPlainString());
@@ -224,7 +222,7 @@ public class MainActivity extends SherlockActivity {
         fareSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, opts));
     }
     
-    /* Returns the fare price selected in the fare drop-down menu. */
+    /** Returns the fare price selected in the fare drop-down menu. */
     private BigDecimal getSelectedFare() {
         switch (fareSpinner.getSelectedItemPosition()) {
         case REGULAR:
@@ -256,7 +254,7 @@ public class MainActivity extends SherlockActivity {
         .show();
     }
     
-    /* 
+    /**
      * Returns true on the first run and after an update.
      * After performing whatever update routine is necessary, save the new
      * version code into the preferences file so that this will return false.
@@ -269,7 +267,7 @@ public class MainActivity extends SherlockActivity {
         return storedVersionCode != versionCode;
     }
     
-    /* Re-loads all MetroCard-related data from data.xml. */
+    /** Re-loads all MetroCard-related data from data.xml. */
     private void resetData() {
         defaultEditor.clear();
         defaultEditor.commit();

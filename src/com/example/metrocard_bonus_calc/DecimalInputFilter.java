@@ -6,14 +6,12 @@ import android.text.Spanned;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Filters input such that only numbers of a given scale are accepted.
- */
+/** Filters input such that only numbers of a given scale are accepted. */
 public class DecimalInputFilter implements InputFilter {
     private Pattern pattern;
 
     /**
-     * Constructor.
+     * Constructs a decimal input filter.
      * 
      * @param scale the scale of acceptable input numbers
      */
