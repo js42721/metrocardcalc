@@ -1,5 +1,5 @@
-MetroCard Bonus Calc
-====================
+MetroCard Bonus Calculator
+==========================
 
 Use this to buy the fares you need without leaving weird amounts on your MetroCard.
 
