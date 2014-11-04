@@ -157,7 +157,7 @@ public class MainActivity extends SherlockActivity {
         }
 
         MetrocardCalculator calc =
-                new MetrocardCalculator(bonusPercentage, bonusMin, increment);
+                new MetrocardCalculator(bonusMin, bonusPercentage, increment);
         
         BigDecimal payment = calc.computePayment(getSelectedFare(), balance, rides);
         BigDecimal bonus = calc.computeBonus(payment);

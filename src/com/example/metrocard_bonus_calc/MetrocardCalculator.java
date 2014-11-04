@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 
 /** Performs MetroCard bonus calculations. */
 public class MetrocardCalculator {
-    private static final BigDecimal CENT = BigDecimal.valueOf(0.01);
+    private static final BigDecimal CENT    = BigDecimal.valueOf(0.01);
     private static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
     
     private BigDecimal bonusMin;
@@ -37,7 +37,7 @@ public class MetrocardCalculator {
      */
     public void setBonusMin(BigDecimal bonusMin) {
         if (bonusMin.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Bonus minimum cannot be negative");
+            throw new IllegalArgumentException("Bonus minimum must not be negative");
         }
         this.bonusMin = bonusMin;
     }
@@ -46,15 +46,16 @@ public class MetrocardCalculator {
      * Sets the payment increment.
      * 
      * @param  increment the payment increment in USD
-     * @throws IllegalArgumentException if increment is 0 or indivisible by 0.01
+     * @throws IllegalArgumentException if increment is not positive or if it
+               is not a multiple of 0.01
      * @throws NullPointerException if increment is null
      */
     public void setIncrement(BigDecimal increment) {
-        if (increment.compareTo(BigDecimal.ZERO) == 0) {
-            throw new IllegalArgumentException("Increment cannot be 0");
+        if (increment.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Increment must be positive");
         }
         if (increment.remainder(CENT).compareTo(BigDecimal.ZERO) != 0) {
-            throw new IllegalArgumentException("Increment must be divisible by 0.01");
+            throw new IllegalArgumentException("Increment must be a multiple of 0.01");
         }
         this.increment = increment;
     }
@@ -68,7 +69,7 @@ public class MetrocardCalculator {
      */
     public void setBonusPercentage(BigDecimal bonusPercentage) {
         if (bonusPercentage.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Bonus percentage cannot be negative");
+            throw new IllegalArgumentException("Bonus percentage must not be negative");
         }
         this.bonusPercentage = bonusPercentage;
     }
@@ -107,29 +108,34 @@ public class MetrocardCalculator {
      * @throws IllegalArgumentException if an argument is negative
      * @throws NullPointerException if an argument is null
      */
-    public BigDecimal computePayment(BigDecimal fare, BigDecimal currentBalance, BigInteger rides) {
+    public BigDecimal computePayment(BigDecimal fare, BigDecimal currentBalance,
+            BigInteger rides) {
+        
         /* 
          * Remember that the equals method takes scale into account. If the
          * scale doesn't matter, use compareTo instead to check for equality.
          */
         if (fare.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Fare cannot be negative");
+            throw new IllegalArgumentException("Fare must not be negative");
         }
         if (currentBalance.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Current balance cannot be negative");
+            throw new IllegalArgumentException("Current balance must not be negative");
         }
         if (rides.compareTo(BigInteger.ZERO) < 0) {
-            throw new IllegalArgumentException("Number of rides cannot be negative");
+            throw new IllegalArgumentException("Number of rides must not be negative");
         }
         BigDecimal target = fare.multiply(new BigDecimal(rides));
         BigDecimal result = target.subtract(currentBalance);
+        if (result.compareTo(BigDecimal.ZERO) <= 0) {
+            return BigDecimal.ZERO;
+        }
         if (result.compareTo(bonusMin) < 0) {
-            return result.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : result;
+            return result;
         }
         BigDecimal bonusDecimal = bonusPercentage.divide(HUNDRED);
         result = result.divide(bonusDecimal.add(BigDecimal.ONE), 2, RoundingMode.HALF_UP);
-        if (result.compareTo(bonusMin) < 0) {
-            return bonusMin;
+        if (result.compareTo(bonusMin) <= 0) {
+            return bonusMin.max(increment);
         }
         /* The result is adjusted to be divisible by the payment increment. */
         BigDecimal remainder = result.remainder(increment);
@@ -149,7 +155,7 @@ public class MetrocardCalculator {
      */
     public BigDecimal computeBonus(BigDecimal payment) {
         if (payment.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Payment cannot be negative");
+            throw new IllegalArgumentException("Payment must not be negative");
         }
         if (payment.compareTo(bonusMin) < 0) {
             return BigDecimal.ZERO;
