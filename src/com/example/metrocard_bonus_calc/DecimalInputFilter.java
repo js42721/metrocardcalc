@@ -16,7 +16,7 @@ public class DecimalInputFilter implements InputFilter {
      * @param scale the scale of acceptable input numbers
      */
     public DecimalInputFilter(int scale) {
-        pattern = Pattern.compile("(0|[1-9]+[0-9]*)?(\\.[0-9]{0," + scale +"})?");
+        pattern = Pattern.compile("(0|[1-9]+[0-9]*)?(\\.[0-9]{0," + scale + "})?");
     }
 
     @Override

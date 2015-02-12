@@ -9,7 +9,8 @@ import android.os.Environment;
 
 /** A collection of useful methods for Android. */
 public final class AndroidUtilities {
-    private AndroidUtilities() {}
+    private AndroidUtilities() {
+    }
     
     /** Returns the value of the versionCode attribute. */
     public static int getVersionCode(Context context) {

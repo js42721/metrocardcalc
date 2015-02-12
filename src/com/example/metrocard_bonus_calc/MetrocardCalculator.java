@@ -129,13 +129,12 @@ public class MetrocardCalculator {
         if (result.compareTo(BigDecimal.ZERO) <= 0) {
             return BigDecimal.ZERO;
         }
-        if (result.compareTo(bonusMin) < 0) {
-            return result;
-        }
-        BigDecimal bonusDecimal = bonusPercentage.divide(HUNDRED);
-        result = result.divide(bonusDecimal.add(BigDecimal.ONE), 2, RoundingMode.HALF_UP);
-        if (result.compareTo(bonusMin) <= 0) {
-            return bonusMin.max(increment);
+        if (result.compareTo(bonusMin) >= 0) {
+            BigDecimal bonusDecimal = bonusPercentage.divide(HUNDRED);
+            result = result.divide(bonusDecimal.add(BigDecimal.ONE), 2, RoundingMode.HALF_UP);
+            if (result.compareTo(bonusMin) <= 0) {
+                return bonusMin.max(increment);
+            }
         }
         /* The result is adjusted to be divisible by the payment increment. */
         BigDecimal remainder = result.remainder(increment);
