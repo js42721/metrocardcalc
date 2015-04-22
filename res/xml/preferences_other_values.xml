@@ -16,10 +16,10 @@
         android:inputType="numberDecimal"
         android:key="increment"
         android:title="@string/pref_increment" />
-    <EditTextPreference
+    <!--<EditTextPreference
         android:defaultValue="@string/default_new_card_fee"
         android:inputType="numberDecimal"
         android:key="newCardFee"
-        android:title="@string/pref_new_card_fee" />
+        android:title="@string/pref_new_card_fee" />-->
 
 </PreferenceScreen>

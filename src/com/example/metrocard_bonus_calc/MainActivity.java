@@ -9,10 +9,7 @@ import android.preference.PreferenceManager;
 import android.text.InputFilter;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -26,71 +23,60 @@ import java.math.BigInteger;
 import java.text.DecimalFormat;
 
 public class MainActivity extends SherlockActivity {
-    public static final String PREFERENCES = "preferences";
+    private static final String PREFERENCES = "preferences";
     
     private static final String USD_FORMAT = "#,##0.00";
     
-    /* Fare drop-down menu positions. */
-    private static final int REGULAR = 0;
-    private static final int REDUCED = 1;
-    private static final int EXP_BUS = 2;
-    private static final int EXP_BUS_REDUCED = 3;
+    private static final String[] keys = { 
+        "regular",
+        "reduced",
+        "expressBus",
+        "expressBusReduced"
+    };
+    
+    private static final int[] nameIds = {
+        R.string.regular,
+        R.string.reduced,
+        R.string.express_bus,
+        R.string.express_bus_reduced
+    };
+    
+    private static final int[] defaultIds = {
+        R.string.default_regular,
+        R.string.default_reduced,
+        R.string.default_express_bus,
+        R.string.default_express_bus_reduced
+    };
     
     private SharedPreferences prefs;
     private SharedPreferences defaultPrefs;
     private Editor defaultEditor;
     private Editor prefsEditor;
-    private LinearLayout layoutBalance;
     private EditText editBalance;
     private EditText editRides;
     private Spinner fareSpinner;
+    private BigDecimal[] fares;
     private BigDecimal bonusPercentage;
     private BigDecimal bonusMin;
     private BigDecimal increment;
-    private BigDecimal regular;
-    private BigDecimal reduced;
-    private BigDecimal expressBus;
-    private BigDecimal expressBusReduced;
-    private BigDecimal newCardFee;
-    private boolean newCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        fares = new BigDecimal[keys.length];
 
-        layoutBalance = (LinearLayout)findViewById(R.id.current_balance_layout);
         editBalance = (EditText)findViewById(R.id.edit_balance);
         editBalance.setFilters(new InputFilter[]{ new DecimalInputFilter(2) });
         editRides = (EditText)findViewById(R.id.edit_rides);
         fareSpinner = (Spinner)findViewById(R.id.fare_spinner);
+        
         defaultPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE);
         defaultEditor = defaultPrefs.edit();
         prefsEditor = prefs.edit();
-
-        RadioGroup cardTypeRadGroup = (RadioGroup)findViewById(R.id.radio_group_card_type);
-        cardTypeRadGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                /* 
-                 * Hides the current balance section of the layout if the user
-                 * is buying a new card.
-                 */ 
-                switch (checkedId) {
-                case R.id.radio_new_card:
-                    layoutBalance.setVisibility(View.GONE);
-                    newCard = true;
-                    break;
-                case R.id.radio_existing_card:
-                    layoutBalance.setVisibility(View.VISIBLE);
-                    editBalance.requestFocus();
-                    newCard = false;
-                    break;
-                }
-            }
-        });
-
+        
         /* 
          * Checks if the app has been updated. If so, the fare data is reset.
          * Note: The first run counts as an update.
@@ -141,13 +127,11 @@ public class MainActivity extends SherlockActivity {
     
     /** Called when the "calculate" button is pressed. */
     public void compute(View view) {
-        BigDecimal balance = BigDecimal.ZERO;
-        BigInteger rides = null;
+        BigDecimal balance;
+        BigInteger rides;
         try {
-            if (!newCard) {
-                String balanceStr = editBalance.getText().toString();
-                balance = new BigDecimal(balanceStr);
-            }
+            String balanceStr = editBalance.getText().toString();
+            balance = new BigDecimal(balanceStr);
             String ridesStr = editRides.getText().toString();
             rides = new BigInteger(ridesStr);
         } catch (NumberFormatException e) { // Thrown when a field is blank.
@@ -156,42 +140,38 @@ public class MainActivity extends SherlockActivity {
             return;
         }
 
-        MetrocardCalculator calc =
-                new MetrocardCalculator(bonusMin, bonusPercentage, increment);
-        
-        BigDecimal payment = calc.computePayment(getSelectedFare(), balance, rides);
+        MetrocardCalculator calc = new MetrocardCalculator(bonusMin, bonusPercentage, increment);
+
+        int fareId = fareSpinner.getSelectedItemPosition();
+        BigDecimal fare = fares[fareId];
+        BigDecimal payment = calc.computePayment(fare, balance, rides);
         BigDecimal bonus = calc.computeBonus(payment);
         BigDecimal newBalance = balance.add(payment).add(bonus);
+        BigDecimal[] div = newBalance.divideAndRemainder(fare);
+        BigInteger ridesOnCard = div[0].toBigInteger();
+        BigDecimal remainder = div[1];
         
-        if (newCard) {
-            /* If a new card is being purchased, a fee is applied. */
-            payment = payment.add(newCardFee);
-        }
-        
-        resultDialog(formatResult(payment, newBalance, bonus));
+        resultDialog(formatResult(ridesOnCard, payment, newBalance, remainder, bonus));
     }
 
     /**
      * Retrieves fares and other data required for calculations.
      * Default values are from data.xml.
      */
-    private void getData() {
-        regular = new BigDecimal(defaultPrefs.getString("regular", 
-                getString(R.string.default_regular)));
-        reduced = new BigDecimal(defaultPrefs.getString("reduced", 
-                getString(R.string.default_reduced)));
-        expressBus = new BigDecimal(defaultPrefs.getString("expressBus", 
-                getString(R.string.default_express_bus)));
-        expressBusReduced = new BigDecimal(defaultPrefs.getString("expressBusReduced", 
-                getString(R.string.default_express_bus_reduced)));
-        bonusPercentage = new BigDecimal(defaultPrefs.getString("bonusPercentage", 
-                getString(R.string.default_bonus_percentage)));
-        bonusMin = new BigDecimal(defaultPrefs.getString("bonusMin", 
-                getString(R.string.default_bonus_min)));
-        increment = new BigDecimal(defaultPrefs.getString("increment", 
-                getString(R.string.default_increment)));
-        newCardFee = new BigDecimal(defaultPrefs.getString("newCardFee", 
-                getString(R.string.default_new_card_fee)));
+    private void getData() {        
+        for (int i = 0; i < fares.length; ++i) {
+            String s = defaultPrefs.getString(keys[i], getString(defaultIds[i]));
+            fares[i] = new BigDecimal(s);
+        }
+        
+        String s1 = defaultPrefs.getString("bonusPercentage", getString(R.string.default_bonus_percentage));
+        bonusPercentage = new BigDecimal(s1);
+        
+        String s2 = defaultPrefs.getString("bonusMin", getString(R.string.default_bonus_min));
+        bonusMin = new BigDecimal(s2);
+        
+        String s3 = defaultPrefs.getString("increment", getString(R.string.default_increment));
+        increment = new BigDecimal(s3);
     }
 
     /** Persists the position of the fare drop-down menu. */
@@ -206,44 +186,51 @@ public class MainActivity extends SherlockActivity {
         int spinnerPosition = prefs.getInt("spinnerPosition", 0);
         fareSpinner.setSelection(spinnerPosition, true);
     }
-
-    /** resId is the ID of the fare descriptor. */
-    private String makeSpinnerEntry(int resId, String cost) {
-        return getString(R.string.spinner_entry, getString(resId), cost);
+    
+    private String makeSpinnerEntry(int fareId) {
+        String cost = fares[fareId].toPlainString();
+        return getString(R.string.spinner_entry, getString(nameIds[fareId]), cost);
     }
     
     /** Fills the fare drop-down menu. Must be called after getData. */
     private void populateSpinner() {
-        String[] opts = new String[4];
-        opts[REGULAR] = makeSpinnerEntry(R.string.regular, regular.toPlainString());
-        opts[REDUCED] = makeSpinnerEntry(R.string.reduced, reduced.toPlainString());  
-        opts[EXP_BUS] = makeSpinnerEntry(R.string.express_bus, expressBus.toPlainString());
-        opts[EXP_BUS_REDUCED] = makeSpinnerEntry(R.string.express_bus_reduced, expressBusReduced.toPlainString());
+        String[] opts = new String[fares.length];
+        for (int i = 0; i < 4; ++i) {
+            opts[i] = makeSpinnerEntry(i);
+        }
         fareSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, opts));
     }
     
-    /** Returns the fare price selected in the fare drop-down menu. */
-    private BigDecimal getSelectedFare() {
-        switch (fareSpinner.getSelectedItemPosition()) {
-        case REGULAR:
-            return regular;
-        case REDUCED:
-            return reduced;
-        case EXP_BUS:
-            return expressBus;
-        case EXP_BUS_REDUCED:
-            return expressBusReduced;
-        default:
-            return null;
-        }
-    }
-    
-    private String formatResult(BigDecimal payment, BigDecimal newBalance, BigDecimal bonus) {
+    private String formatResult(BigInteger rides,
+                                BigDecimal payment,
+                                BigDecimal newBalance,
+                                BigDecimal remainder,
+                                BigDecimal bonus) {
+        
         DecimalFormat df = new DecimalFormat(USD_FORMAT);
+        
+        String lineSeparator = System.getProperty("line.separator");
         String paymentStr = getString(R.string.result_cost, df.format(payment));
-        String newBalanceStr = getString(R.string.result_new_card_info, df.format(newBalance));
+        String fareStr;
+        if (rides.compareTo(BigInteger.ONE) == 0) {
+            fareStr = getString(R.string.fare_singular);
+        } else {
+            fareStr = getString(R.string.fare_plural);
+        }
+        String newBalanceStr = getString(R.string.result_new_balance_info,
+                df.format(newBalance), rides.toString(), fareStr, remainder.toPlainString());
         String bonusStr = getString(R.string.result_bonus_info, df.format(bonus));
-        return paymentStr + "\n\n" + newBalanceStr + "\n\n" + bonusStr;
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(paymentStr);
+        builder.append(lineSeparator);
+        builder.append(lineSeparator);
+        builder.append(newBalanceStr);
+        builder.append(lineSeparator);
+        builder.append(lineSeparator);
+        builder.append(bonusStr);
+        
+        return builder.toString();
     }
 
     private void resultDialog(String result) {

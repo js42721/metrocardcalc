@@ -7,7 +7,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
 
-/** A collection of useful methods for Android. */
 public final class AndroidUtilities {
     private AndroidUtilities() {
     }

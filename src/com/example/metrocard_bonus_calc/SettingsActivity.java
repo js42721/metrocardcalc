@@ -22,8 +22,8 @@ import java.text.DecimalFormat;
 
 @SuppressWarnings("deprecation")
 public class SettingsActivity extends SherlockPreferenceActivity {
-    public static final String ACTION_FARE_VALUES = "com.example.metrocard_bonus_calc.ACTION_FARE_VALUES";
-    public static final String ACTION_OTHER_VALUES = "com.example.metrocard_bonus_calc.ACTION_OTHER_VALUES";
+    private static final String ACTION_FARE_VALUES = "com.example.metrocard_bonus_calc.ACTION_FARE_VALUES";
+    private static final String ACTION_OTHER_VALUES = "com.example.metrocard_bonus_calc.ACTION_OTHER_VALUES";
     
     private static final String USD_FORMAT = "#,##0.00";
     private static final String PERCENT_FORMAT = "#.##";
