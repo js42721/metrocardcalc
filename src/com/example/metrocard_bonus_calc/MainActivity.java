@@ -24,30 +24,30 @@ import java.text.DecimalFormat;
 
 public class MainActivity extends SherlockActivity {
     private static final String PREFERENCES = "preferences";
-    
+
     private static final String USD_FORMAT = "#,##0.00";
-    
+
     private static final String[] keys = { 
         "regular",
         "reduced",
         "expressBus",
         "expressBusReduced"
     };
-    
+
     private static final int[] nameIds = {
         R.string.regular,
         R.string.reduced,
         R.string.express_bus,
         R.string.express_bus_reduced
     };
-    
+
     private static final int[] defaultIds = {
         R.string.default_regular,
         R.string.default_reduced,
         R.string.default_express_bus,
         R.string.default_express_bus_reduced
     };
-    
+
     private SharedPreferences prefs;
     private SharedPreferences defaultPrefs;
     private Editor defaultEditor;
@@ -64,19 +64,19 @@ public class MainActivity extends SherlockActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
+
         fares = new BigDecimal[keys.length];
 
-        editBalance = (EditText)findViewById(R.id.edit_balance);
-        editBalance.setFilters(new InputFilter[]{ new DecimalInputFilter(2) });
-        editRides = (EditText)findViewById(R.id.edit_rides);
-        fareSpinner = (Spinner)findViewById(R.id.fare_spinner);
-        
+        editBalance = (EditText) findViewById(R.id.edit_balance);
+        editBalance.setFilters(new InputFilter[] { new DecimalInputFilter(2) });
+        editRides = (EditText) findViewById(R.id.edit_rides);
+        fareSpinner = (Spinner) findViewById(R.id.fare_spinner);
+
         defaultPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE);
         defaultEditor = defaultPrefs.edit();
         prefsEditor = prefs.edit();
-        
+
         /* 
          * Checks if the app has been updated. If so, the fare data is reset.
          * Note: The first run counts as an update.
@@ -88,7 +88,7 @@ public class MainActivity extends SherlockActivity {
             prefsEditor.commit();
         }
     }
-    
+
     @Override
     protected void onPause() {
         saveSpinnerPosition();
@@ -106,7 +106,7 @@ public class MainActivity extends SherlockActivity {
         populateSpinner();
         restoreSpinnerPosition();
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getSupportMenuInflater();
@@ -124,7 +124,7 @@ public class MainActivity extends SherlockActivity {
             return super.onOptionsItemSelected(item);
         }
     }
-    
+
     /** Called when the "calculate" button is pressed. */
     public void compute(View view) {
         BigDecimal balance;
@@ -150,7 +150,7 @@ public class MainActivity extends SherlockActivity {
         BigDecimal[] div = newBalance.divideAndRemainder(fare);
         BigInteger ridesOnCard = div[0].toBigInteger();
         BigDecimal remainder = div[1];
-        
+
         resultDialog(formatResult(ridesOnCard, payment, newBalance, remainder, bonus));
     }
 
@@ -163,13 +163,13 @@ public class MainActivity extends SherlockActivity {
             String s = defaultPrefs.getString(keys[i], getString(defaultIds[i]));
             fares[i] = new BigDecimal(s);
         }
-        
+
         String s1 = defaultPrefs.getString("bonusPercentage", getString(R.string.default_bonus_percentage));
         bonusPercentage = new BigDecimal(s1);
-        
+
         String s2 = defaultPrefs.getString("bonusMin", getString(R.string.default_bonus_min));
         bonusMin = new BigDecimal(s2);
-        
+
         String s3 = defaultPrefs.getString("increment", getString(R.string.default_increment));
         increment = new BigDecimal(s3);
     }
@@ -186,29 +186,29 @@ public class MainActivity extends SherlockActivity {
         int spinnerPosition = prefs.getInt("spinnerPosition", 0);
         fareSpinner.setSelection(spinnerPosition, true);
     }
-    
+
     private String makeSpinnerEntry(int fareId) {
         String cost = fares[fareId].toPlainString();
         return getString(R.string.spinner_entry, getString(nameIds[fareId]), cost);
     }
-    
+
     /** Fills the fare drop-down menu. Must be called after getData. */
     private void populateSpinner() {
         String[] opts = new String[fares.length];
-        for (int i = 0; i < 4; ++i) {
+        for (int i = 0; i < opts.length; ++i) {
             opts[i] = makeSpinnerEntry(i);
         }
         fareSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, opts));
     }
-    
+
     private String formatResult(BigInteger rides,
                                 BigDecimal payment,
                                 BigDecimal newBalance,
                                 BigDecimal remainder,
                                 BigDecimal bonus) {
-        
+
         DecimalFormat df = new DecimalFormat(USD_FORMAT);
-        
+
         String lineSeparator = System.getProperty("line.separator");
         String paymentStr = getString(R.string.result_cost, df.format(payment));
         String fareStr;
@@ -229,7 +229,7 @@ public class MainActivity extends SherlockActivity {
         builder.append(lineSeparator);
         builder.append(lineSeparator);
         builder.append(bonusStr);
-        
+
         return builder.toString();
     }
 
@@ -240,7 +240,7 @@ public class MainActivity extends SherlockActivity {
         .setNeutralButton(R.string.close, null)
         .show();
     }
-    
+
     /**
      * Returns true on the first run and after an update.
      * After performing whatever update routine is necessary, save the new
@@ -253,7 +253,7 @@ public class MainActivity extends SherlockActivity {
         int storedVersionCode = prefs.getInt("versionCode", 0);
         return storedVersionCode != versionCode;
     }
-    
+
     /** Re-loads all MetroCard-related data from data.xml. */
     private void resetData() {
         defaultEditor.clear();

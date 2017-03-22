@@ -24,28 +24,28 @@ import java.text.DecimalFormat;
 public class SettingsActivity extends SherlockPreferenceActivity {
     private static final String ACTION_FARE_VALUES = "com.example.metrocard_bonus_calc.ACTION_FARE_VALUES";
     private static final String ACTION_OTHER_VALUES = "com.example.metrocard_bonus_calc.ACTION_OTHER_VALUES";
-    
+
     private static final String USD_FORMAT = "#,##0.00";
     private static final String PERCENT_FORMAT = "#.##";
-    
+
     private DecimalFormat formatUSD;
     private DecimalFormat formatPercent;
     private OnPreferenceChangeListener prefListener;
     private OnSharedPreferenceChangeListener sharedPrefListener;
     private SharedPreferences defaultPrefs;
     private Editor defaultEditor;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         formatUSD = new DecimalFormat(USD_FORMAT);
         formatPercent = new DecimalFormat(PERCENT_FORMAT);
         defaultPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         defaultEditor = defaultPrefs.edit();
-        
+
         /* Performs input validation. */
         prefListener = new OnPreferenceChangeListener() {
             @Override
@@ -121,13 +121,13 @@ public class SettingsActivity extends SherlockPreferenceActivity {
             return super.onOptionsItemSelected(item);
         }
     }
-    
+
     private void loadFareValuesPreferences() {
         addPreferencesFromResource(R.xml.preferences_fare_values);
         int prefCount = getPreferenceScreen().getPreferenceCount();
         /* Sets up the input filters for the fare fields. */
         for (int i = 0; i < prefCount; ++i) {
-            EditTextPreference etp = (EditTextPreference)getPreferenceScreen().getPreference(i);
+            EditTextPreference etp = (EditTextPreference) getPreferenceScreen().getPreference(i);
             etp.setOnPreferenceChangeListener(prefListener);
             etp.getEditText().setFilters(new InputFilter[] { new DecimalInputFilter(2) });
             syncSummary(etp);
@@ -139,13 +139,13 @@ public class SettingsActivity extends SherlockPreferenceActivity {
         int prefCount = getPreferenceScreen().getPreferenceCount();
         /* Sets up the input filters. */
         for (int i = 0; i < prefCount; ++i) {
-            EditTextPreference etp = (EditTextPreference)getPreferenceScreen().getPreference(i);
+            EditTextPreference etp = (EditTextPreference) getPreferenceScreen().getPreference(i);
             etp.setOnPreferenceChangeListener(prefListener);
             etp.getEditText().setFilters(new InputFilter[] { new DecimalInputFilter(2) });
             syncSummary(etp);
         }
     }
-    
+
     /** Sets the summary of a preference to its formatted value. */
     private void syncSummary(EditTextPreference etp) {
         String text = etp.getText();
@@ -159,7 +159,7 @@ public class SettingsActivity extends SherlockPreferenceActivity {
         }
         etp.setText(text);
     }
-    
+
     private void confirmRestoreDialog() {
         new AlertDialog.Builder(this)
         .setTitle(R.string.pref_restore_settings)

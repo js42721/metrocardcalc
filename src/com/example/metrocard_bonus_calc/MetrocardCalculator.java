@@ -8,11 +8,11 @@ import java.math.RoundingMode;
 public class MetrocardCalculator {
     private static final BigDecimal CENT    = BigDecimal.valueOf(0.01);
     private static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
-    
+
     private BigDecimal bonusMin;
     private BigDecimal bonusPercentage;
     private BigDecimal increment;
-    
+
     /**
      * Constructs a MetroCard bonus calculator.
      * 
@@ -22,12 +22,12 @@ public class MetrocardCalculator {
      */
     public MetrocardCalculator(BigDecimal bonusMin, BigDecimal bonusPercentage,
             BigDecimal increment) {
-        
+
         setBonusMin(bonusMin);
         setBonusPercentage(bonusPercentage);
         setIncrement(increment);
     }
-    
+
     /**
      * Sets the minimum payment needed for a bonus to be applied.
      * 
@@ -110,7 +110,7 @@ public class MetrocardCalculator {
      */
     public BigDecimal computePayment(BigDecimal fare, BigDecimal currentBalance,
             BigInteger rides) {
-        
+
         /* 
          * Remember that the equals method takes scale into account. If the
          * scale doesn't matter, use compareTo instead to check for equality.
@@ -143,7 +143,7 @@ public class MetrocardCalculator {
         }
         return result;
     }
-    
+
     /**
      * Computes the bonus earned on a given payment.
      * 

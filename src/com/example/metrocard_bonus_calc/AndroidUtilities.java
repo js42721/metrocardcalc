@@ -10,7 +10,7 @@ import android.os.Environment;
 public final class AndroidUtilities {
     private AndroidUtilities() {
     }
-    
+
     /** Returns the value of the versionCode attribute. */
     public static int getVersionCode(Context context) {
         int versionCode = 0;
@@ -23,16 +23,16 @@ public final class AndroidUtilities {
         }
         return versionCode;
     }
-    
+
     /** Returns true if an internet connection is available. */
     public static boolean isInternetAvailable(Context context) {
         ConnectivityManager cm =
-                (ConnectivityManager)context
+                (ConnectivityManager) context
                         .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }
-    
+
     /** Returns true if external storage is readable and writable. */
     public static boolean isExtStorageWritable() {
         String state = Environment.getExternalStorageState();

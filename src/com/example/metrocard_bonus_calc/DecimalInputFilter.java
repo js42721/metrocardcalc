@@ -26,7 +26,7 @@ public class DecimalInputFilter implements InputFilter {
                                Spanned dest,
                                int dstart,
                                int dend) {
-        
+
         String result = dest.subSequence(0, dstart) 
                 + source.toString()
                 + dest.subSequence(dend, dest.length());
