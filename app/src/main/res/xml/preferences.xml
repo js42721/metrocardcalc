@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <Preference
+        android:key="fareValues"
+        android:persistent="false"
+        android:summary="@string/pref_summary_fare_values"
+        android:title="@string/pref_fare_values" >
+        <intent
+            android:action="com.example.metrocardbonuscalculator.ACTION_FARE_VALUES"
+            android:targetClass="com.example.metrocardbonuscalculator.SettingsActivity"
+            android:targetPackage="com.example.metrocardbonuscalculator" />
+    </Preference>
+    <Preference
+        android:key="otherValues"
+        android:persistent="false"
+        android:summary="@string/pref_summary_other_values"
+        android:title="@string/pref_other_values" >
+        <intent
+            android:action="com.example.metrocardbonuscalculator.ACTION_OTHER_VALUES"
+            android:targetClass="com.example.metrocardbonuscalculator.SettingsActivity"
+            android:targetPackage="com.example.metrocardbonuscalculator" />
+    </Preference>
+    <Preference
+        android:key="restoreSettings"
+        android:persistent="false"
+        android:title="@string/pref_restore_settings" >
+    </Preference>
+
+</PreferenceScreen>
