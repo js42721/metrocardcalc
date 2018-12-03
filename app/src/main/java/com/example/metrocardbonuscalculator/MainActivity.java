@@ -140,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
         String defaultBonusMin = getString(R.string.default_bonus_min);
         bonusMin = new BigDecimal(prefs.getString(PREF_KEY_BONUS_MIN, defaultBonusMin));
 
-        /* Increment preference removed, will always get default */
         String defaultIncrement = getString(R.string.default_increment);
         increment = new BigDecimal(prefs.getString(PREF_KEY_INCREMENT, defaultIncrement));
     }

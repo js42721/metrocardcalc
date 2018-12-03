@@ -11,12 +11,12 @@
         android:inputType="numberDecimal"
         android:key="bonusMin"
         android:title="@string/pref_bonus_min" />
-    <!--<EditTextPreference
+    <EditTextPreference
         android:defaultValue="@string/default_increment"
         android:inputType="numberDecimal"
         android:key="increment"
         android:title="@string/pref_increment" />
-    <EditTextPreference
+    <!--<EditTextPreference
         android:defaultValue="@string/default_new_card_fee"
         android:inputType="numberDecimal"
         android:key="newCardFee"
